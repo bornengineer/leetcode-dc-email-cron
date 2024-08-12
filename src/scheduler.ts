@@ -22,7 +22,7 @@ const callGraphQLApi = async (): Promise<any> => {
 
 // Schedule the cron job
 export const scheduleCronJob = (): void => {
-  cron.schedule("*/1 * * * *", async () => {
+  cron.schedule(`${process.env.CRON_SCHEDULE}`, async () => {
     logToFile("Cron job started");
     try {
       const apiData = await callGraphQLApi();
