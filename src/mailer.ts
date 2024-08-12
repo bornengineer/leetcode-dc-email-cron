@@ -1,25 +1,26 @@
 import nodemailer from "nodemailer";
 import formatDate from "../utils/formatDate";
 import dotenv from "dotenv";
+import logToFile from "../utils/logToFile";
 
 dotenv.config();
 
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false,
+  },
+});
+
 // Function to send an email
 const sendEmail = async (question: any): Promise<void> => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-    tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false,
-    },
-  });
-
   const prettifiedJson = JSON.stringify(question, null, 2);
 
   // Escape HTML characters to prevent HTML injection
@@ -123,10 +124,12 @@ const sendEmail = async (question: any): Promise<void> => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log("mail sharing failed: ", error);
+        logToFile("mail sharing failed");
         reject(error);
       } else {
         resolve(info);
         console.log("mail shared: " + info.response);
+        logToFile("mail shared: " + info.response);
       }
     });
   });

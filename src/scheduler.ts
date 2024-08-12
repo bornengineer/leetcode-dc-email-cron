@@ -1,10 +1,9 @@
 import axios from "axios";
 import cron from "node-cron";
-import fs from "fs";
-import path from "path";
 import sendEmail from "./mailer";
 import dotenv from "dotenv";
 import { dailyCodingChallengeQuery as query } from "../utils/graphqlQuery";
+import logToFile from "../utils/logToFile";
 
 dotenv.config();
 
@@ -19,15 +18,6 @@ const callGraphQLApi = async (): Promise<any> => {
     console.error("Error calling GraphQL API:", error);
     throw new Error("Error calling GraphQL API");
   }
-};
-
-// Function to log messages to a file
-const logToFile = (message: string) => {
-  const timestamp = new Date().toISOString();
-  const logMessage = `[${timestamp}] ${message}\n`;
-  const logFilePath = path.resolve(__dirname, "cron.log");
-
-  fs.appendFileSync(logFilePath, logMessage);
 };
 
 // Schedule the cron job
