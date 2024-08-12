@@ -11,6 +11,8 @@ coverage
 
 .env
 
+dist/
+
 # Benchmarking
 benchmarks/graphs
 
